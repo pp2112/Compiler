@@ -1,0 +1,60 @@
+#!/usr/bin/bash
+# Ruby front-end for your compiler.
+# You are free to change the language used for this script,
+# but do *not* change its name.
+
+for file in ../Tests/Syntactic/valid/*
+do
+ for sub in $file/*.s
+ do
+  rm $sub
+ done
+done
+
+for file in ../Tests/Syntactic/valid/*
+do
+ for sub in $file/*.s1
+ do
+  rm $sub
+ done
+done
+
+echo -------------------RUNNING VALID FILES-------------------------
+for file in ../Tests/Syntactic/valid/*
+do
+ for sub in $file/*.wacc
+ do
+  echo "Running test on: $sub"
+  java -cp .:../lib/antlr-4.1-complete.jar:../src/bin code_generator.Code_Gen_Main $sub 
+ done
+done
+echo "Done Compiling"
+
+echo -------------------RUNNING VALID FILES-------------------------
+for file in ../Tests/Syntactic/valid/*
+do
+ for sub in $file/*.s   
+ do
+  echo "Running test on: $sub"
+   arm-linux-gnueabi-gcc -o $sub"1" -mcpu=arm1176jzf-s -mtune=arm1176jzf-s $sub
+   qemu-arm -L /usr/arm-linux-gnueabi/ $sub"1"
+   echo
+ done
+done
+
+for file in ../Tests/Syntactic/valid/*
+do
+ for sub in $file/*.s
+ do
+  rm $sub
+ done
+done
+
+for file in ../Tests/Syntactic/valid/*
+do
+ for sub in $file/*.s1
+ do
+  rm $sub
+ done
+done
+echo "Done Emulating"

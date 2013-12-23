@@ -1,0 +1,27 @@
+echo -------------------RUNNING VALID FILES-------------------------
+for file in Semantic/valid/*
+do
+ for sub in $file/*.wacc
+ do
+  java -cp .:../lib/antlr-4.1-complete.jar:../src/bin semantic_check.Main $sub
+ done
+done
+
+echo
+echo
+echo -------------------RUNNING INVALID FILES-------------------------
+for file in Semantic/invalid/*
+do
+ for sub in $file/*.wacc
+ do
+  java -cp .:../lib/antlr-4.1-complete.jar:../src/bin semantic_check.Main $sub
+ done
+done
+
+for file in Semantic/invalid/*
+do
+ for sub in $file/*.wacc
+ do
+  java -cp .:../lib/antlr-4.1-complete.jar:../src/bin semantic_check.Main $sub
+ done
+done

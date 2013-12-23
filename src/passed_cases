@@ -1,0 +1,12 @@
+begin
+ int[] empty = [];
+ int[] a = [0,1,2,3,4];
+ int[] b = [5,6,7,8,9];
+ pair(int, int) w = newpair(0,1);
+ pair(int, int) x = newpair(2,3);
+ pair(int, int) y = newpair(4,5);
+ pair(pair, pair) z = newpair(w,x);
+ pair(int[], int[]) c = newpair(a,b)
+end
+
+

@@ -1,0 +1,7 @@
+import stdlib.wacco;
+begin
+for(int i=0; i<10; i++) fdo
+ println i;
+ int z = call stdlib_pause(5)
+fdone	
+end

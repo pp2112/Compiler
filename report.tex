@@ -1,0 +1,195 @@
+\documentclass[a4paper]{article}
+
+\setcounter{tocdepth}{3}
+
+% latex package inclusions
+\usepackage{fullpage}
+\usepackage{hyperref}
+\usepackage{tabulary}
+\usepackage{amsthm}
+\usepackage{xcolor}
+
+% set up BNF generator
+\usepackage{syntax}
+\setlength{\grammarparsep}{10pt plus 1pt minus 1pt}
+\setlength{\grammarindent}{10em} 
+
+% set up source code inclusion
+\usepackage{listings}
+\lstset{
+  tabsize=2,
+  basicstyle = \ttfamily\small,
+  columns=fullflexible
+}
+
+% in-line code styling
+\newcommand{\shell}[1]{\lstinline{#1}}
+
+\theoremstyle{definition}
+\newtheorem{question}{Gap}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\title{The WACC Compiler: Report}
+\date{6th December 2013}
+\author{
+Group 32: Joey Chan, Cherie Pun, Pavan Pinnaka, Chloe Mak \\
+}
+
+\maketitle
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The WACC language is a simple programming language which supports function declarations, if-then-else conditionals, while loops, pairs and arrays. The WACC compiler compiles the program and generates the assembly code which can be run on an ARM11 processors. This report explains in detail how we implemented the compiler with Java and Antlr.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Product}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The WACC compiler we built supports all basic functionalities in compiling a WACC program. It performs lexical analysis, syntactic analysis, semantic analysis and generates assembly code for WACC programs.
+\subsection{Front End Functionality}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In front end, we performed lexical, syntactic and semantic analysis on WACC programs. The syntactic check stage deals with any ill-formed programs and the semantic check stage deals with any errors due to violation of the WACC semantics. After we specified the grammar, the lexical analysis produces the tokens, and the syntactic analysis produces the corresponding parse tree with the Antlr tool if the WACC program has no syntactic errors. 
+We were able to go through the WACC program to check if there are semantic errors.
+Errors are detected if the functions have the following violating properties: double declaration, absence of return statements, mismatch of the return type with the declared type and incompatible parameters in function calls.
+The types of every declared identifiers were checked for statements. Error statements are given when types do not match with the expected type. Our semantic checker ensures that the type of the expression for conditionals and loops to be boolean. It also checks that the expressions have valid types for unary and binary operations. In the semantic stage, the compiler should be able to check all types of expressions including base types like int, char, bool and string, pair types and array types.
+
+\subsection{Back End Functionality}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In back end, the compiler generates machine code that works on ARM11 architectures from valid WACC programs by using the parse tree from the Front End. The compiler can handle functions declarations, statements, if-then-else statements or while loop inside and multiple returns. It also supports function calls.
+Assignments, declarations and operations on simple variables, pairs and arrays are also supported. The compiler is able to allocate pairs on the heap and create working arrays with elements that can be used individually.
+
+
+\subsection{Possible Further Development}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+If we have the time, we would further improve and extend our compiler so that it supports more functionality.
+First, we would tidy up and refactor our code to increase the readability. We would also ensure that all cases of the WACC programming language is covered when we review the code during the refactor process. 
+Second, we would implement a full heap with classes for WACC so that we can do object oriented programming on WACC.
+We would also like to implement concurrency for WACC by writing a schedulder. Concurrency in programs greatly reduces the execution time. If we implement this, we can produce very efficient WACC programs.
+Nonetheless, we would like to do more optimisation on the assembly code generated as well as the compiler. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Project Management}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+There are four members in our group and we are all responsible for different parts of the compiler and together we build our product.
+
+\subsection{Group Communication}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+To organise our project and monitor the progress of each member, we have had regular meetings to discuss where we are up to. We usually work in lab together because we can have direct communication with each other and discuss debug problems. Although we have divided the work among ourselves and pushed codes through out the process, we tested each others' codes through every bizarre cases to make sure it pass every tests. Therefore we have to understand each others' code in order to facilitate the debugging process together. For example, when it comes to if-then-else statements inside a function declaration, the return statements determines the pop command; we found out that it is necessary to understand others' code in order for us to know how the compiler works as a whole.
+
+We have also maintained a group chat to instantly update our progress; to keep track of what everyone is doing and prevent git merge conflicts. Facebook instant messaging facilitates the communication between us when we work separately at home. We shared our codes and diagrams in order to help each other to debug their parts. Facebook chat is very convenient as it is also available on mobile devices so that even if we are away from our computer, we can still get instant updates on the project progress.
+
+
+\subsection{Work Division}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We decided the division of work in the first meeting after we read the specification. We divided the parts into Parser and Lexer, Statements, Functions, Loops and complicated data structures like pairs and arrays. We were aware that some codes have to be reused with in other parts: the evaluation for expression and statements are used in functions, if-then-else statements and while-loops.
+
+\subsection{Version Control : Git}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We used git version control to manage our codes throughout the project. We shared the same git repository. After we pushed or changed some codes, we will notify each other in our chat in order to prevent merge conflicts. However, when we were updating codes in a very fast rate, it is hard to prevent conflicts to appear.
+We have had git merge problems for several times and it is very time consuming to fix them. There was a time when we had a git merge problem with the eclipse classpath file and it cost us an hour to fix it as we have all lost the path to our jre file. We spent a lot of time figuring out which version of the codes was the correct one when we have to merge ours and other's codes together. We have also had problems on retrieving old files from git after we had made some mistakes on our codes in the lastest commits. After having these small problems with git, we were very careful of when to push our files and when to pull and merge. We cannot avoid merging as we are indeed editing the same file, however we hope we can minimize the merge conflicts and hence spend less time dealing with git and more time dealing with WACC.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Design Choices}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Front End}
+%%%%%%%%%%%%%%%%%%%%%%
+We used the Antlr tool to perform lexical and syntactic analysis after we specified the grammar in the .g4 files. It generates tokens, forms parse trees and creates associated visit methods for each term we defined.After understanding how Antlr works, we have decided to use recursion to perform semantic analysis for front end. This is because we wanted to prevent duplications of semantic checks which might result in producing multiple messages for one error.
+We recursed through the child of each major parts of the parse tree: functions, statements and expressions. We did not use most of the visit methods to go through the program, but we managed to produce error messages according to the bugs in the WACC program, and not to produce anything when the program is correct. We implemented type checking for all types by introducin a hierachy of types. BaseType, ArrayType, PairType and FunctionType extends Type, while Type and EnumType implements BigType. This enables us to use recursion to check the types and distinguish all types.
+
+
+\subsection{Back End}
+%%%%%%%%%%%%%%%%%%%%%%
+After we completed front end, we have decided to take a different approach from what we did. We want to utilize the visitor pattern to traverse the tree instead of recursion.
+
+We modified the parser so that Antlr generates visit methods for each statement pattern to assist tree walking. We had a preCodeGenWalker to walk through the program which counts the number of messages to be declared and the number of declarations for the calculation of the bytes to be reserved. It also sets up a reservedByteList which records the number of bytes needed for each scope.
+
+After that we traverse the tree again to generate assembly codes. We have a CodeGenerator that stores MessageGenerators and FunctionGenerators, it is responsible for producing code in the end. The above generators all implement the interface Generator. 
+
+MessageGenerators are responsible for storing messages declared by strings, print statements and errors inside the assembly code. It keeps track of the number of messages declared so that the associated instruction in the functions can access the messages accordingly.  
+
+FunctionGenerator creates an associated label for itself when it is instantiated, for instance, the label "main:". Its add method adds an operation, which consists of an operand and variables. An operation implements the Code interface. Operands and registers are defined as Enums. Registers, constant or immediate values, labels and addresses all implement the Variable interface.
+
+The most difficult part in coding the assembly codes was to make sure the offsets of the stack is correct. We implemented this by having a variable representing the stack pointer. Every time we do modifications on the sp register ,PUSH or POP, we increment or decrement the pointer accordingly. 
+
+In every function declaration, if-then-else statement and while-do statement have their own scope. They all have different behaviours when we implement its scope.
+
+
+\subsection{Scripts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We made use of scripts throughout the construction of our compiler. We have scripts for compiling the WACC programs and antlr files. We also have test scripts to run the compiler through every provided example files to make sure our compiler behaves as it has to be: generates error messages for incorrect files and produces correct outputs on legitimate files. This simplifies our work on typing long commands on the terminal every time.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Extensions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+After completing the basic compiler for WACC programs, we have included the following to extend the functionality of the compiler and WACC programs so that it is equipped to do more powerful computations.
+
+\subsection{Side-effecting Expressions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We added +=, -=, ++ and -- to our WACC grammar as unary and binary operations. This tidies up the code and provide convenient short hand for users writing WACC programs.
+
+For example, the statement x++ is interpreted as x = x + 1, and the statement x+=n is interpreted as x = x + n. -= and -- are implemented similarly. Code generation of these statements are done as if they are the statements they translate to.
+
+\subsection{Optimisation - Constant Evaluation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We implemented an optimisation for constant evaluation. To reduce the process time for arithmetic operation ADD and SUB, we have constant evaluation implemented so that it directly loads the evaluated value on the stack instead of moving the values to registers, pushing and popping, and doing the evaluation with assembly code. This optimisation has saved 5 lines of assembly code. This also removes branching instructions to overflow errors.
+
+We implemented constant evaluation using recursion through children of an expression context of PLUS or MINUS. We do evaluation if the child is an integer, otherwise, we just leave it as variables. This is possible as PLUS and MINUS are only available for integers.
+
+\subsection{For Loops and Do-While Loops}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+\textbf{for (declaration ; conditional expression ; assignment) do statement done}
+\end{center}
+A new class ForLoopGenerator was created for generating the assembly code for a for-loop. As the sequence of code generation of a for-loop is different from the visiting order of the nodes, 4 functionGenerators were used within the ForLoopGenerator so that the order of the code could be manipulated within the ForLoopGenerator. Delegate pattern was used to encapsulate the FunctionGenerators within and to ensure any changes to the FunctionGenerators inside the object will not affect the codes in CodeGenWalker. Delegate is changed to a new FunctionGenerator each time after the code generation of an expression or statement is done. Code generation of the for loop is done when addCode() is called, it generates code for branching, labelling  and adds the codes from the FunctionGenerators at the right place.
+\textbf{\begin{center}
+do statement while condional expression done
+\end{center}}
+
+Code generation of a do-while loop is similar to a while loop. The only differences are that the condition checking is done after the statements are executed and the branching occurs at the end of the code.
+
+\subsection{Conditional Assignments}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We have implemented Conditional Assignments as an alternative syntax for assignments associated with if-then-else statements. For example, 
+\begin{center}
+\textbf{int x = true ? 3 ; 4}
+\end{center}
+
+
+We have to ensure that the type of the possible assignment values are the same as the variable we are assigning to. This allows us to extend the flexibility of the WACC programming language and simplifies WACC code.
+
+\subsection{Imports}
+%%%%%%%%%%%%%%%%%%%%
+We have enabled WACC to import functions from .wacco files. This is to aid the setting up the standard library of functions. 
+This is implemented by introducing a new file extension called .wacco, which only contains function declarations. Before the Code Generation occurs, static methods inside the Import class will be invoked to check whether a given wacc file contains any imports declarations. This class is responsible for merging the wacc file with its corresponding import file into another temporary wacc file. To distinguish between the functions in the imported file and the original file, the Import class also renames all the methods in the import file internaly such that they are prefixed by the name of the file being imported from, before merging the two. The temporary file is then passed as the input to the Code Generation stage. If there are no imports, then the temp file will just contain the contents of the wacc file. This temporary file is deleted once the Code Generation is done. Therefore the compiler doesn't actually modify the contents of the original files.
+
+\subsection{Multi-Dimensional Array Simplification}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This extension is mainly to allow WACC programmers to create and visualise multi-dimensional arrays without the need of declaring several one dimensional arrays and nesting them, as this takes up alot of space and is very crude. To implement this feature, instead of replacing the curren array declaration mechanism, we this extension as an optional feature for programmers who want to save alot of space and variable names. The original  mechanism to declare a 2D array for example, was to do something like:\\
+int[] x = [1,2];\\
+int[] y = [3,4];\\
+int[][] z = [x,y].\\
+But with this extension, its also possible to declare N dimensional arrays in a single line directly, which no need for extra variables, as shown below:\\
+int[][] x = [[1,2],[3,4]].\\
+The code generation part for this extension was done by recursively generating the code and offsets for the nested arrays. Its clear that as soon as there are more than 2 dimensions or just many nested elements, the original array declaration method will get really confusing for the programmer to work with. And this extension solves this problem as the array declarations are much clear.
+
+\subsection{Standard Library}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+After we implemented imports, we have prepared stdlib.wacco to allow the main program to call some preset functions from the standard library. We created the functions with reference to java libraries and haskell prelude functions. The functions include max, min, abs, pow, pause, sort, search. To use the standard libraries, the stdlib.wacco has to be in the same folder as the .wacc file which is imporing the stdlib.wacco.
+
+\subsection{Function Overloading}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+We have implemented Function Overloading to enable users to define functions with the same name but with different number and types of parameters. 
+
+We enabled function overloading by introducing a new naming convention for functions. For example, if a function foo has two integer parameter, it will be named "f_foo_int_int" in the generated assembly code, and according to the call statement, the branching instruction will generate the label for jumping according to the arguments input. Under this naming convention, as long as functions have different number of parameters or different type, the function label will have a different name. For array type parameter, instead of appending "int[]" to the function name, "intarr" is appended to represent arrays to avoid erros on assembly codes. Similaryly, 2D arrays has names "intarrarr".
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+

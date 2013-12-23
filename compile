@@ -1,0 +1,9 @@
+#!/bin/bash
+# Ruby front-end for your compiler.
+# You are free to change the language used for this script,
+# but do *not* change its name.
+
+java -cp .:lib/antlr-4.1-complete.jar:src/bin code_generator.Code_Gen_Main $1
+code=$?
+echo "exit code :" $code
+exit $code

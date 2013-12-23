@@ -1,0 +1,6 @@
+begin
+  int[] x = [1,2,3];
+  int[] y = [3,4,5];
+  int[][] z = [x,y]
+end
+

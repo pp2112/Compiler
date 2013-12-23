@@ -1,0 +1,16 @@
+import stdlib.wacco;
+begin
+int func(int a) is
+ int y = 0;
+ if(a == 0) then
+ return 0
+ else
+ y = call func(a-1);
+ y += call stdlib_pow(a,2);
+ return y
+ fi;
+ return 0
+end
+int x = call func(100);
+println x
+end

@@ -1,0 +1,18 @@
+import stdlib.wacco;
+begin
+int func(int[][] a) is
+ int acc = 0;
+ for(int i=0; i<3 ; i++) fdo
+  for(int j=0; j<2; j++) fdo
+   acc += a[j][i]
+  fdone
+ fdone;
+ return acc
+end
+
+int[]x = [1,2,3];
+int[]y = [4,5,6];
+int[][] z = [x,y];
+int res = call func(z);
+println res
+end

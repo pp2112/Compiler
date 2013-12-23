@@ -1,0 +1,12 @@
+src/main/TreeWalkerUtil.java
+src/main/TreeWalker.java
+src/main/Trio.java
+src/main/Type.java
+src/main/ArrayType.java
+src/main/BasicTests.java
+src/main/FunctionType.java
+src/main/PairType.java
+src/main/SymbolTable.java
+src/main/Main.java
+src/main/EnumType.java
+src/main/SingleType.java

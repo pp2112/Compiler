@@ -1,0 +1,22 @@
+#!/bin/sh
+
+LEXER_FILE=BasicLexer.g4
+GRAMMAR_FILE=Wacc.g4
+
+BASEDIR=$(dirname $0)
+
+TARGET_DIR=../src/antlr/antlr
+
+rm -rf $TARGET_DIR
+
+echo Compiling the lexer..
+java -jar $BASEDIR/../lib/antlr-4.1-complete.jar $BASEDIR/$LEXER_FILE -o $TARGET_DIR -no-listener -visitor -Werror 
+
+if [ $? -ne 0 ]
+then 
+	exit 1
+fi
+
+echo Compiling the Grammar..
+java -jar $BASEDIR/../lib/antlr-4.1-complete.jar $BASEDIR/$GRAMMAR_FILE -o $TARGET_DIR -no-listener -visitor -Werror
+

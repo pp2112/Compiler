@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="antlr"/>
+	<classpathentry kind="src" path="front_end"/>
+	<classpathentry kind="src" path="back_end"/>
+	<classpathentry kind="src" path="Extensions"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/pavan/wacc_32/lib/antlr-4.1-complete.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

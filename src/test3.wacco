@@ -1,0 +1,11 @@
+bool neg(bool b) is
+ return !b 
+end
+	
+int add(int b) is
+ return b
+end
+
+int sub(int b) is
+ return b
+end

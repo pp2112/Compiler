@@ -1,0 +1,11 @@
+import stdlib.wacco;
+begin
+ int x = 1; 
+ ddo 
+  for(int i=0; i<20; i += 2) fdo
+   println i;
+   int z = call stdlib_pause(1)
+  fdone
+ dwhile (x < 10) 
+ ddone 
+end
